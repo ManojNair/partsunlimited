@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: "partsunlimitedaks-db9f"
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: "partsunlimitedaks-db9f"
