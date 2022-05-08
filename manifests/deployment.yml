@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "partsunlimitedaks-db9f"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "partsunlimitedaks-db9f"
+  template:
+    metadata:
+      labels:
+        app: "partsunlimitedaks-db9f"
+    spec:
+      containers:
+        - name: "partsunlimitedaks-db9f"
+          image: "partsunlimitedacr001.azurecr.io/partsunlimitedaks"
+          ports:
+          - containerPort: 80
