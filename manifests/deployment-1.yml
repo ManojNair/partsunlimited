@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "letscodeaks-438c"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "letscodeaks-438c"
+  template:
+    metadata:
+      labels:
+        app: "letscodeaks-438c"
+    spec:
+      containers:
+        - name: "letscodeaks-438c"
+          image: "letscodeacr01.azurecr.io/letscodeaks"
+          ports:
+          - containerPort: 80
