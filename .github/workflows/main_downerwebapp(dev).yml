@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - downerwebapp(dev)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://downeracr.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_8c295c8d825442c3825b0fe5a36ad7ca }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_58d530195bb148ddb2fe6b2ff20012a1 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: downeracr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_8c295c8d825442c3825b0fe5a36ad7ca }}/downerapp:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'dev'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'downerwebapp'
+        slot-name: 'dev'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_7f6b20d77500426394f471dedd7b193c }}
+        images: 'downeracr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_8c295c8d825442c3825b0fe5a36ad7ca }}/downerapp:${{ github.sha }}'
